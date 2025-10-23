@@ -11,6 +11,11 @@ import {
 } from "react-native";
 import { styles, COLORS } from "./styles";
 import kinksData from "./data/kinks.json";
+import type { Category, Item, Answers, Choice } from "./types";
+import Questionnaire from "./components/Questionnaire";
+import SwipeQuestionnaire from "./components/SwipeQuestionnaire";
+import { labelFor, colorFor } from "./utils/choice";
+import { useMatches } from "./hooks/useMatches";
 
 /**
  * App-Überblick
@@ -47,20 +52,10 @@ export default function App() {
   };
 
   // Gemeinsame Auswahl beider Partner (nur „like“ und „try“)
-  const matches = useMemo(() => {
-    const accept = new Set<Choice>(["like", "try"]);
-    return ALL_ITEMS.filter(
-      (k) =>
-        accept.has(answersA[k.id] as Choice) &&
-        accept.has(answersB[k.id] as Choice)
-    );
-  }, [answersA, answersB, ALL_ITEMS]);
+  const matches = useMatches(ALL_ITEMS, answersA, answersB);
 
   // Darstellungshilfen (Label/Farbe) für Choices
-  const labelFor = (c: Choice | undefined) =>
-    c === "like" ? "Mag ich" : c === "try" ? "Ausprobieren" : "Mag ich nicht";
-  const colorFor = (c: Choice | undefined) =>
-    c === "like" ? COLORS.yes : c === "try" ? COLORS.maybe : COLORS.no;
+  // Anzeige der Choices via Utils
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,8 +123,8 @@ export default function App() {
       )}
 
       {step === "p1" && (
-        <Questionnaire
-          title={`${nameA || "Partner:in"} - deine Auswahl`}
+        <SwipeQuestionnaire
+          title={`${nameA || "Partner:in"} - wische deine Auswahl`}
           sections={SECTIONS}
           answers={answersA}
           onChange={(id, c) => setAnswersA((s) => ({ ...s, [id]: c }))}
@@ -138,8 +133,8 @@ export default function App() {
       )}
 
       {step === "p2" && (
-        <Questionnaire
-          title={`${nameB || "Partner:in"} - deine Auswahl`}
+        <SwipeQuestionnaire
+          title={`${nameB || "Partner:in"} - wische deine Auswahl`}
           sections={SECTIONS}
           answers={answersB}
           onChange={(id, c) => setAnswersB((s) => ({ ...s, [id]: c }))}
@@ -225,122 +220,3 @@ export default function App() {
   );
 }
 
-// Datentypen
-type Choice = "like" | "try" | "dislike"; // Auswahl pro Frage
-type Item = { id: string; label: string }; // Einzelne Frage (Kink)
-type Category = { id: string; label: string; items: Item[] }; // Kategorie mit Fragen
-type Answers = Record<string, Choice | undefined>; // Antworten-Map (key = Item-ID)
-
-/**
- * Questionnaire – rendert eine Liste kategorisierter Fragen
- * Aktiviert den Weiter-Button erst, wenn alle beantwortet sind
- */
-function Questionnaire({
-  title,
-  sections,
-  answers,
-  onChange,
-  onNext,
-}: {
-  title: string;
-  sections: Category[];
-  answers: Answers;
-  onChange: (id: string, c: Choice) => void;
-  onNext: () => void;
-}) {
-  // Alle Items ableiten und prüfen, ob alle beantwortet wurden
-  const allItems = useMemo(() => sections.flatMap((s) => s.items), [sections]);
-  const allAnswered = allItems.every((i) => !!answers[i.id]);
-
-  return (
-    <View style={styles.screenPad}>
-      <View style={styles.headerSmall}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>Bitte pro Frage wählen</Text>
-      </View>
-
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingVertical: 8 }}
-      >
-        {sections.map((sec) => (
-          <View key={sec.id}>
-            {/* Abschnittstitel */}
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{sec.label}</Text>
-            </View>
-            {/* Fragen der Kategorie */}
-            {sec.items.map((item) => (
-              <View key={item.id} style={styles.qCard}>
-                <Text style={styles.qLabel}>{item.label}</Text>
-                <View style={styles.qOptionsRow}>
-                  <Option
-                    label="Mag ich"
-                    active={answers[item.id] === "like"}
-                    color={COLORS.yes}
-                    onPress={() => onChange(item.id, "like")}
-                  />
-                  <Option
-                    label="Ausprobieren"
-                    active={answers[item.id] === "try"}
-                    color={COLORS.maybe}
-                    onPress={() => onChange(item.id, "try")}
-                  />
-                  <Option
-                    label="Mag ich nicht"
-                    active={answers[item.id] === "dislike"}
-                    color={COLORS.no}
-                    onPress={() => onChange(item.id, "dislike")}
-                  />
-                </View>
-              </View>
-            ))}
-          </View>
-        ))}
-      </ScrollView>
-
-      <TouchableOpacity
-        style={[
-          styles.button,
-          styles.buttonPrimary,
-          !allAnswered ? styles.buttonDisabled : null,
-        ]}
-        disabled={!allAnswered}
-        onPress={onNext}
-      >
-        <Text style={styles.buttonPrimaryText}>Weiter</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-/**
- * Option – Button-Pill für eine Auswahl pro Frage
- */
-function Option({
-  label,
-  active,
-  color,
-  onPress,
-}: {
-  label: string;
-  active: boolean;
-  color: string;
-  onPress: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.optBtn,
-        { borderColor: color },
-        active ? { backgroundColor: color } : null,
-      ]}
-      accessibilityRole="button"
-    >
-      <Text style={[styles.optText, active ? { color: "#0b132b" } : null]}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-}
