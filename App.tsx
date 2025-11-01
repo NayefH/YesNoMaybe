@@ -1,3 +1,19 @@
+/**
+ * App-Dokumentation
+ *
+ * Überblick
+ * - Flow: Start (welcome) → Namen (names) → Partner A (p1) → Partner B (p2) → Vergleich (compare)
+ * - Datenquelle: Kategorien + Items aus JSON (`./data/kinks.json`)
+ * - Matching: Es werden nur gemeinsame „Mag ich“/„Ausprobieren“ angezeigt (siehe `useMatches`)
+ *
+ * Nützliche Links
+ * - Expo StatusBar: https://docs.expo.dev/versions/latest/sdk/status-bar/
+ * - SafeAreaView: https://reactnative.dev/docs/safeareaview
+ * - ScrollView: https://reactnative.dev/docs/scrollview
+ * - TextInput: https://reactnative.dev/docs/textinput
+ * - React useMemo (Ableitungen memoisieren): https://react.dev/reference/react/useMemo
+ * - Custom Hook für Matches: ./hooks/useMatches.ts
+ */
 import { StatusBar } from "expo-status-bar";
 import React, { useMemo, useState } from "react";
 import {
@@ -219,4 +235,3 @@ export default function App() {
     </SafeAreaView>
   );
 }
-

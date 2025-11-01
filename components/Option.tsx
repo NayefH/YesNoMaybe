@@ -1,7 +1,11 @@
 /**
  * Option
- * Small, reusable pill-button used to represent a selectable choice.
- * Pure presentation: styles + press handler are provided by the parent.
+ * Kleiner, wiederverwendbarer "Pill"-Button zur Darstellung einer auswählbaren Option.
+ * Reines Presentational-Component: Styles, Farbe und onPress kommen vom Parent.
+ *
+ * Siehe auch:
+ * - React Native TouchableOpacity: https://reactnative.dev/docs/touchableopacity
+ * - Accessibility-Rollen und -Eigenschaften: https://reactnative.dev/docs/accessibility
  */
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
@@ -13,9 +17,13 @@ export default function Option({
   color,
   onPress,
 }: {
+  /** Sichtbarer Text der Option. */
   label: string;
+  /** Ob die Option aktuell aktiv/ausgewählt ist (steuert Styles). */
   active: boolean;
+  /** Rahmen- und (wenn aktiv) Hintergrundfarbe der Option. */
   color: string;
+  /** Callback bei Klick/Touch. */
   onPress: () => void;
 }) {
   return (

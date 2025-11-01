@@ -11,6 +11,11 @@ import { ACCEPT_CHOICES } from '../utils/choice';
  * @param answersA Answers of partner A.
  * @param answersB Answers of partner B.
  * @returns Items that both partners want (intersection of ACCEPT_CHOICES).
+ *
+ * Hinweise & Links:
+ * - React useMemo (Memoisierung teurer Ableitungen): https://react.dev/reference/react/useMemo
+ * - Set-API (Konzept hinter ACCEPT_CHOICES): https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set
+ * - Interne Utils und Konfiguration der akzeptierten Choices: ../utils/choice.ts
  */
 
 //
