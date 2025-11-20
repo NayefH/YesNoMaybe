@@ -2,12 +2,15 @@
  * Questionnaire
  * Renders a categorized list of items with three explicit choices per item.
  * Enables the continue button only when all items have an answer.
+ *
+ * Nicht mehr verwendet (ersetzt durch SwipeQuestionnaire)
+ * Ist wie SwipeQuestionnaire, aber mit klassischen Buttons statt Swipe-Gesten.
  */
-import React, { useMemo } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { COLORS, styles } from '../styles';
-import Option from './Option';
-import type { Answers, Category, Choice } from '../types';
+import React, { useMemo } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { COLORS, styles } from "../styles";
+import Option from "./Option";
+import type { Answers, Category, Choice } from "../types";
 
 export default function Questionnaire({
   title,
@@ -32,7 +35,10 @@ export default function Questionnaire({
         <Text style={styles.subtitle}>Bitte pro Frage wählen</Text>
       </View>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingVertical: 8 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingVertical: 8 }}
+      >
         {sections.map((sec) => (
           <View key={sec.id}>
             <View style={styles.sectionHeader}>
@@ -44,21 +50,21 @@ export default function Questionnaire({
                 <View style={styles.qOptionsRow}>
                   <Option
                     label="Mag ich"
-                    active={answers[item.id] === 'like'}
+                    active={answers[item.id] === "like"}
                     color={COLORS.yes}
-                    onPress={() => onChange(item.id, 'like')}
+                    onPress={() => onChange(item.id, "like")}
                   />
                   <Option
                     label="Ausprobieren"
-                    active={answers[item.id] === 'try'}
+                    active={answers[item.id] === "try"}
                     color={COLORS.maybe}
-                    onPress={() => onChange(item.id, 'try')}
+                    onPress={() => onChange(item.id, "try")}
                   />
                   <Option
                     label="Mag ich nicht"
-                    active={answers[item.id] === 'dislike'}
+                    active={answers[item.id] === "dislike"}
                     color={COLORS.no}
-                    onPress={() => onChange(item.id, 'dislike')}
+                    onPress={() => onChange(item.id, "dislike")}
                   />
                 </View>
               </View>
@@ -68,7 +74,11 @@ export default function Questionnaire({
       </ScrollView>
 
       <TouchableOpacity
-        style={[styles.button, styles.buttonPrimary, !allAnswered ? styles.buttonDisabled : null]}
+        style={[
+          styles.button,
+          styles.buttonPrimary,
+          !allAnswered ? styles.buttonDisabled : null,
+        ]}
         disabled={!allAnswered}
         onPress={onNext}
       >

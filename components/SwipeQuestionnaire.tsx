@@ -76,6 +76,8 @@ export default function SwipeQuestionnaire({
   });
 
   const threshold = 120;
+  const swipeDist = threshold;
+  const swipeVel = 0.5;
   const cardSize = Math.max(200, Math.min(640, width - 48, height - 220));
 
   const complete = (choice: Choice) => {

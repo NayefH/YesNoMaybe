@@ -3,36 +3,36 @@
     "id": "c1",
     "label": "Soft & Romantisch",
     "items": [
-      { "id": "k1", "label": "Küssen" },
-      { "id": "k2", "label": "Massage" },
-      { "id": "k7", "label": "Öl-Massage" }
+      { "id": "k1", "label": "Küssen", "level": "Anfänger", "photo": "" },
+      { "id": "k2", "label": "Massage", "level": "Anfänger", "photo": "" },
+      { "id": "k7", "label": "Öl-Massage", "level": "Fortgeschritten", "photo": "" }
     ]
   },
   {
     "id": "c2",
     "label": "Fantasie & Rollen",
     "items": [
-      { "id": "k3", "label": "Rollenspiele" },
-      { "id": "k12", "label": "Public Tease" },
-      { "id": "k8", "label": "Outdoor" }
+      { "id": "k3", "label": "Rollenspiele", "level": "Anfänger", "photo": "" },
+      { "id": "k12", "label": "Public Tease", "level": "Fortgeschritten", "photo": "" },
+      { "id": "k8", "label": "Outdoor", "level": "Fortgeschritten", "photo": "" }
     ]
   },
   {
     "id": "c3",
     "label": "BDSM Light",
     "items": [
-      { "id": "k4", "label": "Augenbinde" },
-      { "id": "k5", "label": "Leichte Fesselspiele" },
-      { "id": "k6", "label": "Dirty Talk" }
+      { "id": "k4", "label": "Augenbinde", "level": "Anfänger", "photo": "" },
+      { "id": "k5", "label": "Leichte Fesselspiele", "level": "Fortgeschritten", "photo": "" },
+      { "id": "k6", "label": "Dirty Talk", "level": "Anfänger", "photo": "" }
     ]
   },
   {
     "id": "c4",
     "label": "Weitere",
     "items": [
-      { "id": "k9", "label": "Oral" },
-      { "id": "k10", "label": "Anal" },
-      { "id": "k11", "label": "Spielzeuge" }
+      { "id": "k9", "label": "Oral", "level": "Anfänger", "photo": "" },
+      { "id": "k10", "label": "Anal", "level": "Experte", "photo": "" },
+      { "id": "k11", "label": "Spielzeuge", "level": "Fortgeschritten", "photo": "" }
     ]
   }
 ]
