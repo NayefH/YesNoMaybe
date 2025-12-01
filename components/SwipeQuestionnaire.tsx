@@ -7,7 +7,13 @@
  * - Left: dislike
  * Also offers tap-based fallback buttons for accessibility and precision.
  */
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   PanResponder,
@@ -16,6 +22,7 @@ import {
   View,
   useWindowDimensions,
   Image,
+  Platform,
 } from "react-native";
 import { COLORS, styles } from "../styles";
 import Option from "./Option";
@@ -80,30 +87,33 @@ export default function SwipeQuestionnaire({
   const swipeVel = 0.5;
   const cardSize = Math.max(200, Math.min(640, width - 48, height - 220));
 
-  const complete = (choice: Choice) => {
-    const toValue =
-      choice === "like"
-        ? { x: 500, y: 0 }
-        : choice === "dislike"
-        ? { x: -500, y: 0 }
-        : { x: 0, y: -500 };
-    Animated.timing(position, {
-      toValue,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      if (current) {
-        onChange(current.id, choice);
-      }
-      position.setValue({ x: 0, y: 0 });
-      const next = index + 1;
-      if (next >= items.length) {
-        onNext();
-      } else {
-        setIndex(next);
-      }
-    });
-  };
+  const complete = useCallback(
+    (choice: Choice) => {
+      const toValue =
+        choice === "like"
+          ? { x: 500, y: 0 }
+          : choice === "dislike"
+          ? { x: -500, y: 0 }
+          : { x: 0, y: -500 };
+      Animated.timing(position, {
+        toValue,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => {
+        if (current) {
+          onChange(current.id, choice);
+        }
+        position.setValue({ x: 0, y: 0 });
+        const next = index + 1;
+        if (next >= items.length) {
+          onNext();
+        } else {
+          setIndex(next);
+        }
+      });
+    },
+    [current, index, items.length, onChange, onNext, position]
+  );
 
   const panResponder = useRef(
     PanResponder.create({
@@ -146,6 +156,27 @@ export default function SwipeQuestionnaire({
       onPanResponderTerminationRequest: () => false,
     })
   ).current;
+
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+
+    const handleKeyDown = (e: any) => {
+      if (allAnswered) return;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        complete("like");
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        complete("dislike");
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        complete("try");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [allAnswered, complete]);
 
   return (
     <View style={styles.screenPad}>
