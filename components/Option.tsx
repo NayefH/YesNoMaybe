@@ -7,9 +7,9 @@
  * - React Native TouchableOpacity: https://reactnative.dev/docs/touchableopacity
  * - Accessibility-Rollen und -Eigenschaften: https://reactnative.dev/docs/accessibility
  */
-import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
-import { styles } from '../styles';
+import React from "react";
+import { Text, TouchableOpacity } from "react-native";
+import { COLORS, styles } from "../styles";
 
 export default function Option({
   label,
@@ -32,11 +32,16 @@ export default function Option({
       style={[
         styles.optBtn,
         { borderColor: color },
-        active ? { backgroundColor: color } : null,
+        active ? [styles.optBtnActive, { backgroundColor: color }] : null,
       ]}
       accessibilityRole="button"
     >
-      <Text style={[styles.optText, active ? { color: '#0b132b' } : null]}>
+      <Text
+        style={[
+          styles.optText,
+          active ? [styles.optTextActive, { color: COLORS.bg }] : null,
+        ]}
+      >
         {label}
       </Text>
     </TouchableOpacity>
