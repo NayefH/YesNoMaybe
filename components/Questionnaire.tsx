@@ -25,6 +25,8 @@ export default function Questionnaire({
   onChange: (id: string, c: Choice) => void;
   onNext: () => void;
 }) {
+  // useMemo vermeidet Neuberechnung bei unveraenderten sections.
+  // Quelle: React useMemo, https://react.dev/reference/react/useMemo
   const allItems = useMemo(() => sections.flatMap((s) => s.items), [sections]);
   const allAnswered = allItems.every((i) => !!answers[i.id]);
 
@@ -35,6 +37,8 @@ export default function Questionnaire({
         <Text style={styles.subtitle}>Bitte pro Frage wählen</Text>
       </View>
 
+      {/* ScrollView fuer scrollbare Listen; Quelle: React Native ScrollView,
+          https://reactnative.dev/docs/scrollview */}
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingVertical: 8 }}

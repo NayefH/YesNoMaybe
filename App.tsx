@@ -29,7 +29,6 @@ import {
 import { styles, COLORS } from "./styles";
 import kinksData from "./data/kinks.json";
 import type { Category, Item, Answers, Choice } from "./types";
-import Questionnaire from "./components/Questionnaire";
 import SwipeQuestionnaire from "./components/SwipeQuestionnaire";
 import { labelFor, colorFor } from "./utils/choice";
 import { useMatches } from "./hooks/useMatches";
@@ -160,7 +159,10 @@ export default function App() {
       )}
 
       {step === "compare" && (
-        <View style={styles.screenPad}>
+        <ScrollView
+          style={{ flex: 1, width: "100%" }}
+          contentContainerStyle={[styles.screenPad, { alignItems: "stretch" }]}
+        >
           {/* Vergleichsansicht */}
           <View style={styles.headerSmall}>
             <Text style={styles.title}>Eure Matches</Text>
@@ -168,10 +170,7 @@ export default function App() {
               Gemeinsame „Mag ich“ oder „Ausprobieren“
             </Text>
           </View>
-          <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingVertical: 8 }}
-          >
+          <View style={{ width: "100%", gap: 12 }}>
             {matches.length === 0 ? (
               <Text
                 style={[
@@ -220,8 +219,8 @@ export default function App() {
                 </View>
               ))
             )}
-          </ScrollView>
-          <View style={{ gap: 12 }}>
+          </View>
+          <View style={{ gap: 12, marginTop: 16, marginBottom: 12 }}>
             <TouchableOpacity
               style={[styles.button, styles.buttonPrimary]}
               onPress={resetAll}
@@ -229,7 +228,7 @@ export default function App() {
               <Text style={styles.buttonPrimaryText}>Neu starten</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       )}
 
       <StatusBar style="light" />

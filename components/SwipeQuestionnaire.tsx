@@ -7,25 +7,18 @@
  * - Left: dislike
  * Also offers tap-based fallback buttons for accessibility and precision.
  */
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
-  PanResponder,
   Text,
   TouchableOpacity,
   View,
   useWindowDimensions,
   Image,
-  Platform,
 } from "react-native";
 import { COLORS, styles } from "../styles";
 import Option from "./Option";
+import { useSwipeHandlers } from "../utils/useSwipeHandlers";
 import type { Answers, Category, Choice } from "../types";
 
 export default function SwipeQuestionnaire({
@@ -59,6 +52,25 @@ export default function SwipeQuestionnaire({
   const current = items[index];
 
   const position = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const pulse = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1.03,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 1600,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
   const rotate = position.x.interpolate({
     inputRange: [-200, 0, 200],
     outputRange: ["-12deg", "0deg", "12deg"],
@@ -87,99 +99,71 @@ export default function SwipeQuestionnaire({
   const swipeVel = 0.5;
   const cardSize = Math.max(200, Math.min(640, width - 48, height - 220));
 
-  const complete = useCallback(
-    (choice: Choice) => {
-      const toValue =
-        choice === "like"
-          ? { x: 500, y: 0 }
-          : choice === "dislike"
-          ? { x: -500, y: 0 }
-          : { x: 0, y: -500 };
-      Animated.timing(position, {
-        toValue,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(() => {
-        if (current) {
-          onChange(current.id, choice);
-        }
-        position.setValue({ x: 0, y: 0 });
-        const next = index + 1;
-        if (next >= items.length) {
-          onNext();
-        } else {
-          setIndex(next);
-        }
-      });
-    },
-    [current, index, items.length, onChange, onNext, position]
+  const renderHeart = (size: number, color: string, style: object) => (
+    <Animated.View
+      style={[
+        {
+          position: "absolute",
+          width: size,
+          height: size,
+          transform: [{ scale: pulse }],
+        },
+        style,
+      ]}
+    >
+      <View
+        style={{
+          position: "absolute",
+          width: size,
+          height: size,
+          backgroundColor: color,
+          borderRadius: size * 0.2,
+          transform: [{ rotate: "45deg" }],
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          width: size,
+          height: size,
+          backgroundColor: color,
+          borderRadius: size / 2,
+          top: -size * 0.35,
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          width: size,
+          height: size,
+          backgroundColor: color,
+          borderRadius: size / 2,
+          left: -size * 0.35,
+        }}
+      />
+    </Animated.View>
   );
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_e, g) => {
-        const absDx = Math.abs(g.dx);
-        const absDy = Math.abs(g.dy);
-        // Deadzone: > 5 px verhindert versehentliche Auslösungen beim Tippen.
-        // Nach Bedarf anpassen (kleiner = empfindlicher).
-        return absDx > 5 || absDy > 5;
-      },
-      onPanResponderMove: (_e, g) => {
-        position.setValue({ x: g.dx, y: g.dy });
-      },
-      onPanResponderRelease: (_e, g) => {
-        const absDx = Math.abs(g.dx);
-        const absDy = Math.abs(g.dy);
-        const horizontalDominant = absDx >= absDy;
-
-        if (horizontalDominant) {
-          if (g.dx > swipeDist || g.vx > swipeVel) return complete("like");
-          if (g.dx < -swipeDist || g.vx < -swipeVel) return complete("dislike");
-        } else {
-          if (g.dy < -swipeDist || -g.vy > swipeVel) return complete("try");
-        }
-
-        Animated.spring(position, {
-          toValue: { x: 0, y: 0 },
-          useNativeDriver: true,
-          friction: 6,
-        }).start();
-      },
-      onPanResponderTerminate: () => {
-        Animated.spring(position, {
-          toValue: { x: 0, y: 0 },
-          useNativeDriver: true,
-          friction: 6,
-        }).start();
-      },
-      onPanResponderTerminationRequest: () => false,
-    })
-  ).current;
-
-  useEffect(() => {
-    if (Platform.OS !== "web") return;
-
-    const handleKeyDown = (e: any) => {
-      if (allAnswered) return;
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        complete("like");
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        complete("dislike");
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        complete("try");
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [allAnswered, complete]);
+  const { complete, panResponder } = useSwipeHandlers({
+    position,
+    current,
+    index,
+    itemsLength: items.length,
+    swipeDist,
+    swipeVel,
+    onChange,
+    onNext,
+    allAnswered,
+    setIndex,
+  });
 
   return (
     <View style={styles.screenPad}>
+      {/* Romantischer Herz-Hintergrund */}
+      <View pointerEvents="none" style={{ position: "absolute", inset: 0 }}>
+        {renderHeart(260, "rgba(255,143,177,0.22)", { top: 20, left: -10 })}
+        {renderHeart(220, "rgba(247,100,128,0.2)", { bottom: 10, right: -30 })}
+      </View>
       <View style={styles.headerSmall}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>
@@ -205,6 +189,7 @@ export default function SwipeQuestionnaire({
                 transform: [
                   { translateX: position.x },
                   { translateY: position.y },
+                  { scale: pulse },
                   { rotate },
                 ],
               },
@@ -219,7 +204,7 @@ export default function SwipeQuestionnaire({
               }
               style={{
                 width: "100%",
-                height: 160,
+                height: "70%",
                 borderRadius: 12,
                 marginBottom: 16,
               }}
