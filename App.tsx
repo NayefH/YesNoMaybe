@@ -32,6 +32,7 @@ import type { Category, Item, Answers, Choice } from "./types";
 import SwipeQuestionnaire from "./components/SwipeQuestionnaire";
 import { labelFor, colorFor } from "./utils/choice";
 import { useMatches } from "./hooks/useMatches";
+import RomanticBackground from "./components/RomanticBackground";
 
 /**
  * App-Überblick
@@ -75,6 +76,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <RomanticBackground />
       {step === "welcome" && (
         <View style={styles.content}>
           {/* Startbildschirm: Intro + CTA */}

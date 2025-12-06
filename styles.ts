@@ -19,6 +19,8 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.bg,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+    overflow: 'hidden',
 
   },
   // Centers inner content and adds left/right space on wide screens
