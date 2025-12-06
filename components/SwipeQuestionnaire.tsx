@@ -167,7 +167,9 @@ export default function SwipeQuestionnaire({
       <View style={styles.headerSmall}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>
-          Rechts = Mag ich • Oben = Ausprobieren • Links = Mag ich nicht
+          Rechts = Mag ich {"\n"}
+          Oben = Ausprobieren {"\n"}
+          Links = Mag ich nicht
         </Text>
       </View>
 
