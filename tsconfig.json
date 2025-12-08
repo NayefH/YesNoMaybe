@@ -3,5 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": ["**/*"],
+  "exclude": ["node_modules", "dist", ".expo", "android", "ios"]
 }
