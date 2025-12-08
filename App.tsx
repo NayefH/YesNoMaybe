@@ -94,7 +94,9 @@ export default function App() {
             </TouchableOpacity>
           </View>
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Made with Expo</Text>
+            <Text style={styles.footerText}>
+              Made with Expo by Nayef Hajjaj
+            </Text>
           </View>
         </View>
       )}
