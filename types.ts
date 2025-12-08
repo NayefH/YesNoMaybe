@@ -5,7 +5,7 @@
 /** A single selection a partner can make for an item. */
 export type Choice = "like" | "try" | "dislike";
 /** A single question/entry shown to the user. */
-export type Level = "Anfänger" | "Fortgeschritten" | "Experte";
+export type Level = "Anf\u00e4nger" | "Fortgeschritten" | "Experte";
 export type Item = {
   id: string;
   label: string;
